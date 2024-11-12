@@ -7,7 +7,7 @@ import {FundMe} from "../src/FundMe.sol";
 import {DeployFundMe} from "../script/DeployFundMe.s.sol";
 
 // address constant PRICE_FEED_CONTRACT_ON_SEPOLIA = 0x694AA1769357215DE4FAC081bf1f309aDC325306;
-import {MockV3Aggregator} from "@chainlink/contracts/v0.8/tests/MockV3Aggregator.sol";
+import {MockV3Aggregator} from "./mocks/MockV3Aggregator.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/v0.8/shared/interfaces/AggregatorV2V3Interface.sol";
 
 contract FundMeTest is Test {
