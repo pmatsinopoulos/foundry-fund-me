@@ -45,11 +45,8 @@ contract FundMe {
     //// private
     //// view / pure
 
-    // constructor(address priceFeed) {
-    //     s_priceFeed = AggregatorV3Interface(priceFeed);
-    //     i_owner = msg.sender;
-    // }
-    constructor() {
+    constructor(address priceFeed) {
+        s_priceFeed = AggregatorV3Interface(priceFeed);
         i_owner = msg.sender;
     }
 
