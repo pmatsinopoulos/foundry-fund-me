@@ -14,10 +14,13 @@ contract FundMeTest is Test {
     FundMe fundMe;
     AggregatorV3Interface priceFeed = new MockV3Aggregator(6, 1);
     DeployFundMe deployFundMe;
+    address USER = makeAddr("user");
+    uint256 constant STARTING_BALANCE = 20 ether;
 
     function setUp() external {
         deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run();
+        vm.deal(USER, STARTING_BALANCE);
     }
 
     function testMinimumDollarIs5() public view {
@@ -25,12 +28,34 @@ contract FundMeTest is Test {
     }
 
     function testOwnerIsMessageSender() public view {
-        console.log("***************** msg.sender = %s", msg.sender);
         assertEq(fundMe.getOwner(), msg.sender); // because FundMeTest (this) is deploying the contract. So, this is the owner.
     }
 
     function testPriceFeedVersionIsAccurate() public view {
         uint256 version = fundMe.getVersion();
         assertEq(version, 4);
+    }
+
+    function test_fund_WhenEthSentIsLessThanMinimumUSD_ItReverts() public {
+        vm.expectRevert();
+
+        // fire
+        fundMe.fund();
+    }
+
+    function test_fund_WhenWeSendEnoughEthWeUpdateState() public {
+        uint256 amount = 10e18;
+        uint256 amountFundedBefore = fundMe.getAddressToAmountFunded(address(this));
+
+        // fire
+        vm.prank(USER);
+        fundMe.fund{value: amount}();
+
+        // check expectations
+        uint256 amountFundedAfter = fundMe.getAddressToAmountFunded(USER);
+
+        assertEq(amountFundedAfter, amountFundedBefore + amount);
+
+        assertEq(fundMe.getFunder(0), USER);
     }
 }
