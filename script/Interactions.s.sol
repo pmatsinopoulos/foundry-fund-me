@@ -5,21 +5,23 @@ import {Script, console} from "forge-std/Script.sol";
 import {FundMe} from "../src/FundMe.sol";
 
 contract FundMeScript is Script {
-    uint256 constant SEND_VALUE = 0.01 ether;
+    uint256 public constant SEND_VALUE = 0.01 ether;
 
-    function fundFundMe(address mostRecentlyDeployed) public {
-        vm.startBroadcast();
-
+    function fundFundMe(address mostRecentlyDeployed, address buyer) public {
         FundMe fundMe = FundMe(mostRecentlyDeployed);
-        fundMe.fund{value: SEND_VALUE}();
 
-        vm.stopBroadcast();
+        vm.prank(buyer);
+        fundMe.fund{value: SEND_VALUE}();
 
         console.log("Funded FundMe with %s", SEND_VALUE);
     }
 
-    function run(address mostRecentlyDeployed) external {
-        fundFundMe(mostRecentlyDeployed);
+    function run(address mostRecentlyDeployed, address buyer) external {
+        vm.startBroadcast();
+
+        fundFundMe(mostRecentlyDeployed, buyer);
+
+        vm.stopBroadcast();
     }
 }
 
