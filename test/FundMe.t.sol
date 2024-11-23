@@ -17,6 +17,7 @@ contract FundMeTest is Test {
     address USER = makeAddr("user");
     uint256 constant STARTING_BALANCE = 20 ether;
     uint256 constant TEST_FUNDING_AMOUNT = 10 ether;
+    uint256 constant GAS_PRICE = 1 gwei;
 
     modifier fundUser(string memory user) {
         address u = makeAddr(user);
@@ -115,8 +116,34 @@ contract FundMeTest is Test {
         address owner = fundMe.getOwner();
         uint256 balanceBefore = owner.balance;
 
+        // uint256 gasBefore = gasleft();
+        // vm.txGasPrice(GAS_PRICE);
         vm.prank(owner);
-        fundMe.withdraw();
+        fundMe.withdraw(); // should have spent gas as owner.
+        // uint256 gasAfter = gasleft();
+        // uint256 gasUsed = gasBefore - gasAfter;
+        // uint256 gasUsedInWei = gasUsed * tx.gasprice;
+        // console.log("Gas used: ", gasUsed); // 43688, 44637
+        // console.log("Gas used in wei:", gasUsedInWei); // 10669000000000
+
+        uint256 balanceAfter = owner.balance;
+
+        assertEq(balanceAfter, balanceBefore + TEST_FUNDING_AMOUNT * 2);
+    }
+
+    function test_cheaperWithdraw_DepositsAllFundsToOwner() public fundUser("peter") fundUser("mary") {
+        address owner = fundMe.getOwner();
+        uint256 balanceBefore = owner.balance;
+
+        // uint256 gasBefore = gasleft();
+        // vm.txGasPrice(GAS_PRICE);
+        vm.prank(owner);
+        fundMe.cheaperWithdraw(); // should have spent gas as owner.
+        // uint256 gasAfter = gasleft();
+        // uint256 gasUsed = gasBefore - gasAfter;
+        // uint256 gasUsedInWei = gasUsed * tx.gasprice;
+        // console.log("Gas used: ", gasUsed); // 43596
+        // console.log("Gas used in wei:", gasUsedInWei); // 10669000000000
 
         uint256 balanceAfter = owner.balance;
 
