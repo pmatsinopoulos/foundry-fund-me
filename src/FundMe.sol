@@ -22,7 +22,7 @@ contract FundMe {
     // State variables
     uint256 public constant MINIMUM_USD = 5 * 10 ** 18;
     address private immutable i_owner;
-    address[] public s_funders;
+    address[] private s_funders;
     mapping(address => uint256) private s_addressToAmountFunded;
     AggregatorV3Interface private s_priceFeed;
 
@@ -102,6 +102,10 @@ contract FundMe {
 
     function getFunder(uint256 index) external view returns (address) {
         return s_funders[index];
+    }
+
+    function getNumberOfFunders() external view returns (uint256) {
+        return s_funders.length;
     }
 
     function getOwner() public view returns (address) {
