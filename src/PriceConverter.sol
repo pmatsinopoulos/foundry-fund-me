@@ -6,7 +6,12 @@ import {AggregatorV3Interface} from "@chainlink/contracts/v0.8/shared/interfaces
 library PriceConverter {
     function getPrice(AggregatorV3Interface priceFeed) internal view returns (uint256) {
         (, int256 answer,,,) = priceFeed.latestRoundData();
-        // ETH/USD rate in 18 digit
+        // Example returned: 358624329351
+        // The +#decimals()+ function on the priceFeed returns +8+
+        // Hence, this means that 1 ETH is equal to 3,586.24329351 USD at the
+        // time of the query.
+        //
+        // ETH/USD rate in 18 digit ?
         return uint256(answer * 10000000000);
     }
 
